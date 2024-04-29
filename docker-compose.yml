@@ -1,36 +1,21 @@
-version: "3.8"
+version: '3'
+
 services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: production
+      - "3001:3000"  # Map port 3000 in the container to port 3001 on the host
     depends_on:
       - mongodb
-    networks:
-      - yolo-network
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    networks:
-      - yolo-network
+
   mongodb:
     image: mongo
     ports:
-      - "27017:27017"
+      - "27018:27017"  # Map port 27017 in the container to port 27018 on the host
     volumes:
       - mongo-data:/data/db
-    networks:
-      - yolo-network
-
-networks:
-  yolo-network:
 
 volumes:
   mongo-data:
