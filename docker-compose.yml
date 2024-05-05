@@ -16,6 +16,8 @@ services:
       - "80:80"
     depends_on:
       - mongodb
+    volumes:
+      - ./My\ Code/yolo/client/public:/usr/src/app/build
     networks:
       - yolo-network
 
