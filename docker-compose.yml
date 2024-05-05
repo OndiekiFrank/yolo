@@ -24,7 +24,7 @@ services:
   mongodb:
     image: ondiekifrank/mongodb:1.0
     ports:
-      - "27018:27017"
+      - "27017:27017"
     volumes:
       - mongo-data:/data/db
     networks:
