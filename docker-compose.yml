@@ -17,7 +17,7 @@ services:
     depends_on:
       - mongodb
     volumes:
-      - /Development/My\ Code/yolo/client/public:/usr/src/app/build
+      - ./Development/My\ Code/yolo/client/public:/usr/src/app/build
     networks:
       - yolo-network
 
