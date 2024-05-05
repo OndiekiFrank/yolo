@@ -4,11 +4,13 @@ services:
   backend:
     image: ondiekifrank/backend:1.01
     ports:
-      - "3001:3000"
+      - "3001:5000"  # Updated port mapping to match the backend server port
     depends_on:
       - mongodb
     networks:
       - yolo-network
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/yolomy  # Updated MongoDB connection string
 
   frontend:
     image: ondiekifrank/clientapp:v1.0
