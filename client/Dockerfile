@@ -1,24 +1,35 @@
-FROM node:14-slim AS builder
+# Stage 1: Build the application
+FROM node:14-alpine AS builder
 
-WORKDIR /usr/src/app
+# Set working directory
+WORKDIR /app
 
-COPY package*.json ./
+# Copy package.json and package-lock.json
+COPY package.json package-lock.json ./
 
-RUN npm install --only=production
+# Install dependencies
+RUN npm install
 
+# Copy the rest of the application
 COPY . .
 
+# Install react-scripts globally
+RUN npm install -g react-scripts@latest
+
+# Build the application
 RUN npm run build
 
-FROM node:14-slim
+# Stage 2: Create production image
+FROM nginx:1.22-alpine
 
-WORKDIR /usr/src/app
+# Copy custom Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
 
-COPY --from=builder /usr/src/app/package*.json ./
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/build ./build
-COPY --from=builder /usr/src/app/public ./public
+# Copy build files from the previous stage
+COPY --from=builder /app/build /usr/share/nginx/html
 
+# Expose port 3000
 EXPOSE 3000
 
-CMD ["npm", "start"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

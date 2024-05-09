@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   backend:
@@ -7,8 +7,6 @@ services:
       - "3001:3000"
     depends_on:
       - mongodb
-    networks:
-      - yolo-network
     environment:
       MONGODB_URI: mongodb://mongodb:27017/yolomy
 
@@ -18,10 +16,6 @@ services:
       - "3000:3000"
     depends_on:
       - backend
-    volumes:
-      - /home/frank/Development/My Code/yolo/client/build:/usr/src/app/build
-    networks:
-      - yolo-network
 
   mongodb:
     image: ondiekifrank/mongodb:1.0
@@ -29,12 +23,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
-    networks:
-      - yolo-network
-
-networks:
-  yolo-network:
-    driver: bridge
 
 volumes:
   mongo-data:
