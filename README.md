@@ -97,3 +97,4 @@ Once all containers are up and running, open a web browser and navigate to [http
 Test the functionality of the application, including adding a product if necessary.
 ```
 
+##  MIT LICENSE
