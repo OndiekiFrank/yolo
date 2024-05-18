@@ -27,7 +27,7 @@
 
 - name: Clone frontend repository
   git:
-    repo: 'https://github.com/yourrepo/frontend.git'
+    repo: 'https://github.com/OndiekiFrank/frontend.git'
     dest: /var/www/frontend
   tags: frontend
 

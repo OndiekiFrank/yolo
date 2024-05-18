@@ -14,7 +14,7 @@
 
 - name: Clone backend repository
   git:
-    repo: "{{ backend_repo }}"
+    repo: 'https://github.com/OndiekiFrank/backend.git'
     dest: /var/www/backend
   tags: backend
 
