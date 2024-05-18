@@ -1,14 +1,26 @@
----
-- name: Install MongoDB
+# roles/mongodb/tasks/main.yml
+
+- name: Import MongoDB public GPG key
+  apt_key:
+    url: https://www.mongodb.org/static/pgp/server-4.4.asc
+    state: present
+  tags: mongodb
+
+- name: Create MongoDB list file
+  apt_repository:
+    repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse"
+    state: present
+  tags: mongodb
+
+- name: Install MongoDB packages
   apt:
-    name: mongodb
+    name: mongodb-org
     state: present
   tags: mongodb
 
 - name: Start MongoDB service
-  service:
-    name: mongodb
+  systemd:
+    name: mongod
     state: started
     enabled: yes
   tags: mongodb
-
