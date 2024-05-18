@@ -1,29 +1,39 @@
-# roles/backend/tasks/main.yml
-
 - name: Install Node.js
+  become: yes
   apt:
     name: nodejs
     state: present
-  tags: nodejs
+  tags: 
+    - nodejs
 
 - name: Install npm
+  become: yes
   apt:
     name: npm
     state: present
-  tags: npm
+  tags: 
+    - npm
 
 - name: Clone backend repository
+  become: yes
   git:
     repo: 'https://github.com/OndiekiFrank/backend.git'
     dest: /var/www/backend
-  tags: backend
+  tags: 
+    - backend
 
 - name: Install backend dependencies
+  become: yes
   npm:
     path: /var/www/backend
     state: present
-  tags: backend
+  tags: 
+    - backend
 
 - name: Start backend service
-  shell: npm start chdir=/var/www/backend
-  tags: backend
+  become: yes
+  shell: npm start
+  args:
+    chdir: /var/www/backend
+  tags: 
+    - backend

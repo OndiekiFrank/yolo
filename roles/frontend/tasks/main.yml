@@ -1,20 +1,23 @@
 - name: Install Node.js
+  become: yes
   apt:
     name: nodejs
     state: present
-  tags: nodejs
-  become: yes
+  tags: 
+    - nodejs
 
 - name: Clone frontend repository
+  become: yes
   git:
     repo: 'https://github.com/OndiekiFrank/frontend.git'
     dest: /var/www/frontend
-  tags: frontend
-  become: yes
+  tags: 
+    - frontend
 
 - name: Build frontend
+  become: yes
   command: npm run build
   args:
     chdir: /var/www/frontend
-  tags: frontend
-  become: yes
+  tags: 
+    - frontend

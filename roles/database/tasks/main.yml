@@ -1,26 +1,32 @@
-# roles/mongodb/tasks/main.yml
-
 - name: Import MongoDB public GPG key
+  become: yes
   apt_key:
     url: https://www.mongodb.org/static/pgp/server-5.0.asc
     state: present
-  tags: mongodb
+  tags: 
+    - mongodb
 
 - name: Create MongoDB list file
+  become: yes
   apt_repository:
     repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse"
     state: present
-  tags: mongodb
+  tags: 
+    - mongodb
 
 - name: Install MongoDB packages
+  become: yes
   apt:
     name: mongodb-org
     state: present
-  tags: mongodb
+  tags: 
+    - mongodb
 
 - name: Start MongoDB service
+  become: yes
   systemd:
     name: mongod
     state: started
     enabled: yes
-  tags: mongodb
+  tags: 
+    - mongodb

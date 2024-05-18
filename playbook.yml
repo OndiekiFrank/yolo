@@ -34,10 +34,11 @@
         state: present
       tags: nodejs
 
-    - name: Clone frontend repository
+    - name: Clone frontend repository (shallow clone)
       git:
         repo: 'https://github.com/OndiekiFrank/frontend.git'
         dest: /var/www/frontend
+        depth: 1  # Perform a shallow clone
       tags: frontend
 
     - name: Build frontend
