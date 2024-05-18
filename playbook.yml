@@ -1,8 +1,51 @@
 - name: Deploy e-commerce application
-  hosts: web
+  hosts: all
   become: yes
   vars_files:
     - vars/main.yml
+  tasks:
+    - name: Gathering Facts
+      gather_facts: yes
+
+    - name: Update apt package lists
+      apt:
+        update_cache: yes
+
+    - name: Install prerequisites
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - curl
+        - gnupg
+
+    - name: Download NodeSource setup script
+      get_url:
+        url: https://deb.nodesource.com/setup_14.x
+        dest: /tmp/setup_14.x
+        mode: '0755'
+
+    - name: Run NodeSource setup script
+      command: bash /tmp/setup_14.x
+
+    - name: Install Node.js
+      apt:
+        name: nodejs
+        state: present
+      tags: nodejs
+
+    - name: Clone frontend repository
+      git:
+        repo: 'https://github.com/OndiekiFrank/frontend.git'
+        dest: /var/www/frontend
+      tags: frontend
+
+    - name: Build frontend
+      command: npm run build
+      args:
+        chdir: /var/www/frontend
+      tags: frontend
+
   roles:
     - frontend
     - backend
