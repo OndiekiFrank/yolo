@@ -1,4 +1,17 @@
-# roles/frontend/tasks/main.yml
+- name: Update apt package lists
+  apt:
+    update_cache: yes
+
+- name: Install prerequisites
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - curl
+    - gnupg
+
+- name: Add NodeSource repository
+  command: curl -sL https://deb.nodesource.com/setup_14.x | bash -
 
 - name: Install Node.js
   apt:
@@ -6,22 +19,10 @@
     state: present
   tags: nodejs
 
-- name: Install npm
-  apt:
-    name: npm
-    state: present
-  tags: npm
-
 - name: Clone frontend repository
   git:
-    repo: "{{ frontend_repo }}"
+    repo: 'https://github.com/yourrepo/frontend.git'
     dest: /var/www/frontend
-  tags: frontend
-
-- name: Install frontend dependencies
-  npm:
-    path: /var/www/frontend
-    state: present
   tags: frontend
 
 - name: Build frontend
