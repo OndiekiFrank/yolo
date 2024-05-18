@@ -1,28 +1,29 @@
----
-- name: Install Docker
+# roles/backend/tasks/main.yml
+
+- name: Install Node.js
   apt:
-    name: docker.io
+    name: nodejs
     state: present
-  tags: docker
+  tags: nodejs
+
+- name: Install npm
+  apt:
+    name: npm
+    state: present
+  tags: npm
 
 - name: Clone backend repository
   git:
     repo: "{{ backend_repo }}"
-    dest: /home/vagrant/yolo/backend
-    version: HEAD
+    dest: /var/www/backend
   tags: backend
 
-- name: Build backend Docker image
-  command: docker build -t yolo-backend .
-  args:
-    chdir: /home/vagrant/yolo/backend
+- name: Install backend dependencies
+  npm:
+    path: /var/www/backend
+    state: present
   tags: backend
 
-- name: Run backend container
-  docker_container:
-    name: yolo-backend
-    image: yolo-backend
-    state: started
-    ports:
-      - "5000:5000"
+- name: Start backend service
+  shell: npm start chdir=/var/www/backend
   tags: backend
