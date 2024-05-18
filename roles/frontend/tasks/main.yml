@@ -1,36 +1,20 @@
-- name: Update apt package lists
-  apt:
-    update_cache: yes
-
-- name: Install prerequisites
-  apt:
-    name: "{{ item }}"
-    state: present
-  loop:
-    - curl
-    - gnupg
-
-- name: Download NodeSource setup script
-  get_url:
-    url: https://deb.nodesource.com/setup_14.x
-    dest: /tmp/setup_14.x
-    mode: '0755'
-
-- name: Run NodeSource setup script
-  command: bash /tmp/setup_14.x
-
 - name: Install Node.js
   apt:
     name: nodejs
     state: present
   tags: nodejs
+  become: yes
 
 - name: Clone frontend repository
   git:
     repo: 'https://github.com/OndiekiFrank/frontend.git'
     dest: /var/www/frontend
   tags: frontend
+  become: yes
 
 - name: Build frontend
-  command: npm run build chdir=/var/www/frontend
+  command: npm run build
+  args:
+    chdir: /var/www/frontend
   tags: frontend
+  become: yes
