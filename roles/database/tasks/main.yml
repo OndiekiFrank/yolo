@@ -2,13 +2,13 @@
 
 - name: Import MongoDB public GPG key
   apt_key:
-    url: https://www.mongodb.org/static/pgp/server-4.4.asc
+    url: https://www.mongodb.org/static/pgp/server-5.0.asc
     state: present
   tags: mongodb
 
 - name: Create MongoDB list file
   apt_repository:
-    repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse"
+    repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse"
     state: present
   tags: mongodb
 
