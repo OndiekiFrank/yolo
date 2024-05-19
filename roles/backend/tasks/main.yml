@@ -21,7 +21,7 @@
   tags: backend
   become: yes
 
-- name: Debug: List files in /var/www/backend
+- name: List files in /var/www/backend
   ansible.builtin.command:
     cmd: ls -la /var/www/backend
   register: backend_dir_contents
