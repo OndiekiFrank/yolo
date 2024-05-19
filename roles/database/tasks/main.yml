@@ -1,29 +1,15 @@
 ---
-- name: Import MongoDB public GPG key
-  ansible.builtin.apt_key:
-    url: https://www.mongodb.org/static/pgp/server-5.0.asc
-    state: present
-  tags: mongodb
-  become: yes
-
-- name: Create MongoDB list file
-  ansible.builtin.apt_repository:
-    repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse"
-    state: present
-  tags: mongodb
-  become: yes
-
-- name: Install MongoDB packages
+- name: Install MongoDB
   ansible.builtin.apt:
-    name: mongodb-org
+    name: mongodb
     state: present
-  tags: mongodb
+  tags: database
   become: yes
 
-- name: Start MongoDB service
-  ansible.builtin.systemd:
-    name: mongod
+- name: Ensure MongoDB is running
+  ansible.builtin.service:
+    name: mongodb
     state: started
     enabled: yes
-  tags: mongodb
+  tags: database
   become: yes

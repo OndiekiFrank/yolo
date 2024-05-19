@@ -13,26 +13,36 @@
   tags: npm
   become: yes
 
-- name: Clone backend repository (shallow clone)
+- name: Clone backend repository (full clone)
   ansible.builtin.git:
     repo: 'https://github.com/OndiekiFrank/yolo.git'
     dest: /var/www/backend
-    depth: 1
+    version: HEAD
   tags: backend
   become: yes
 
-- name: Install backend dependencies
+- name: Debug: List files in /var/www/backend
+  ansible.builtin.command:
+    cmd: ls -la /var/www/backend
+  register: backend_dir_contents
+  tags: backend
+  become: yes
+
+- name: Print backend directory contents
+  ansible.builtin.debug:
+    var: backend_dir_contents.stdout_lines
+  tags: backend
+
+- name: Install npm dependencies
   ansible.builtin.command:
     cmd: npm install
-    args:
-      chdir: /var/www/backend
+    chdir: /var/www/backend
   tags: backend
   become: yes
 
-- name: Start backend service
+- name: Start backend server
   ansible.builtin.command:
     cmd: npm start
-    args:
-      chdir: /var/www/backend
+    chdir: /var/www/backend
   tags: backend
   become: yes

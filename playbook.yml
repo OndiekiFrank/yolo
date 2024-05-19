@@ -37,6 +37,12 @@
         state: present
       tags: nodejs
 
+    - name: Install npm
+      ansible.builtin.apt:
+        name: npm
+        state: present
+      tags: npm
+
   roles:
     - frontend
     - backend

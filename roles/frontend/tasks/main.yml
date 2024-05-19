@@ -1,3 +1,4 @@
+---
 - name: Install Node.js
   ansible.builtin.apt:
     name: nodejs
@@ -12,13 +13,25 @@
   tags: npm
   become: yes
 
-- name: Clone frontend repository (shallow clone)
+- name: Clone frontend repository (full clone)
   ansible.builtin.git:
     repo: 'https://github.com/OndiekiFrank/yolo.git'
     dest: /var/www/frontend
-    depth: 1
+    version: HEAD
   tags: frontend
   become: yes
+
+- name: Debug: List files in /var/www/frontend
+  ansible.builtin.command:
+    cmd: ls -la /var/www/frontend
+  register: frontend_dir_contents
+  tags: frontend
+  become: yes
+
+- name: Print frontend directory contents
+  ansible.builtin.debug:
+    var: frontend_dir_contents.stdout_lines
+  tags: frontend
 
 - name: Install npm dependencies
   ansible.builtin.command:
