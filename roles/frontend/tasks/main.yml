@@ -1,4 +1,3 @@
----
 - name: Install Node.js
   ansible.builtin.apt:
     name: nodejs
@@ -17,15 +16,13 @@
 - name: Install npm dependencies
   ansible.builtin.command:
     cmd: npm install
-    args:
-      chdir: /var/www/frontend
+    chdir: /var/www/frontend
   tags: frontend
   become: yes
 
 - name: Build frontend
   ansible.builtin.command:
     cmd: npm run build
-    args:
-      chdir: /var/www/frontend
+    chdir: /var/www/frontend
   tags: frontend
   become: yes
