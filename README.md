@@ -1,100 +1,55 @@
+# Automated E-Commerce Platform Deployment
 
-```markdown
-# E-Commerce Platform Dockerization
+## Overview
+This project aims to automate the setup and deployment of an e-commerce platform using Ansible. It involves provisioning a Vagrant virtual machine, configuring it with Ansible, and deploying the application.
 
-This project aims to containerize an e-commerce platform using Docker, allowing for easy deployment and scalability.
+## Stage 1: Ansible Instrumentation
+### Objectives
+- Set up the environment with Vagrant.
+- Implement Ansible playbook with the following features:
+  - Variables for customization.
+  - Roles for modularization.
+  - Blocks and tags for organization.
+- Configure Docker containers for the application.
+- Clone code from GitHub and set up the application on the virtual machine.
 
-## Prerequisites
+### Usage
+1. Clone the repository:
+   ```bash
+   git clone <repository_url>
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd automated-ecommerce-deployment
+   ```
+3. Provision the virtual machine using Vagrant:
+   ```bash
+   vagrant up
+   ```
+4. Run the Ansible playbook to configure and deploy the application:
+   ```bash
+   ansible-playbook playbook.yml
+   ```
 
-Ensure you have the following installed:
+## Stage 2: Ansible and Terraform Instrumentation (Optional)
+### Objectives
+- Integrate Terraform for resource provisioning.
+- Use Ansible to configure the server and deploy the application.
+- Maintain good practices such as variable usage.
 
-- Node.js and npm
-- MongoDB (start the MongoDB service with `sudo service mongod start`)
+## Deliverables
+- GitHub repository with VagrantFile, Playbook, Variable files, and Roles.
 
-## Setting Up the Client (Frontend)
+## Rubric
+- **Git Work Flow**: Descriptive commits, well-documented README.md and explanation.md, proper folder structure.
+- **Stage Completion**: Functional completion of both stages.
+- **Service Orchestration**: Successful deployment of the application, adherence to good practices.
 
-Navigate to the client folder:
+## Contributors
+- - [Ondieki Frank](https://github.com/OndiekiFrank)
 
-```bash
-cd client
-```
 
-**Install dependencies:**
+## License
+This project is licensed under the [MIT License](link_to_license).
 
-```bash
-npm install
-```
-
-## Setting Up the Backend
-
-Open a new terminal window or tab.
-
-Navigate to the backend folder:
-
-```bash
-cd path/to/backend
-```
-
-**Install dependencies:**
-
-```bash
-npm install
-```
-
-## Dockerizing MongoDB
-
-To Dockerize MongoDB, you can use the official MongoDB Docker image. Here's how you can do it:
-
-1. **Create a docker-compose.yml file in the root directory with the provided content, including the MongoDB service:**
-
-```yaml
-version: '3.7'
-
-services:
-  mongodb:
-    image: mongo
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./data:/data/db
-```
-
-2. **Build and run the MongoDB container using Docker Compose:**
-
-```bash
-docker-compose up --build mongodb
-```
-
-## Dockerizing the Client (Frontend)
-
-1. **Create a Dockerfile in the client directory with the provided content.**
-
-2. **Create a docker-compose.yml file in the root directory with the provided content, including the client service.**
-
-3. **Build the client image using Docker Compose:**
-
-```bash
-docker-compose up --build client
-```
-
-## Dockerizing the Backend
-
-1. **Create a Dockerfile in the backend directory with the provided content.**
-
-2. **Modify the docker-compose.yml file to include the backend service.**
-
-3. **Build the backend image using Docker Compose:**
-
-```bash
-docker-compose up --build backend
-```
-
-## Testing the Application
-
-Once all containers are up and running, open a web browser and navigate to [http://localhost:3000](http://localhost:3000) to access the client (frontend) application.
-
-Test the functionality of the application, including adding a product if necessary.
-```
-
-##  MIT LICENSE
+---
