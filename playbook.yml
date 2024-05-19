@@ -5,7 +5,7 @@
   tasks:
     - name: Install MongoDB
       apt:
-        name: mongodb-server
+        name: mongodb
         state: present
       tags: database
 
@@ -13,13 +13,8 @@
       service:
         name: mongodb
         state: started
-      become: yes
       tags: database
 
-- name: Deploy e-commerce application
-  hosts: all
-  become: yes
-  tasks:
     - name: Install Node.js (frontend)
       apt:
         name: nodejs
@@ -77,10 +72,6 @@
         chdir: /var/www/frontend/client
       tags: frontend
 
-- name: Deploy e-commerce application
-  hosts: all
-  become: yes
-  tasks:
     - name: Install Node.js (backend)
       apt:
         name: nodejs
