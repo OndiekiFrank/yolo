@@ -33,16 +33,28 @@
     var: frontend_dir_contents.stdout_lines
   tags: frontend
 
+- name: List files in /var/www/frontend/client
+  ansible.builtin.command:
+    cmd: ls -la /var/www/frontend/client
+  register: client_dir_contents
+  tags: frontend
+  become: yes
+
+- name: Print client directory contents
+  ansible.builtin.debug:
+    var: client_dir_contents.stdout_lines
+  tags: frontend
+
 - name: Install npm dependencies
   ansible.builtin.command:
     cmd: npm install
-    chdir: /var/www/frontend
+    chdir: /var/www/frontend/client
   tags: frontend
   become: yes
 
 - name: Build frontend
   ansible.builtin.command:
     cmd: npm run build
-    chdir: /var/www/frontend
+    chdir: /var/www/frontend/client
   tags: frontend
   become: yes
