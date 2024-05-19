@@ -21,7 +21,7 @@
   tags: frontend
   become: yes
 
-- name: Debug: List files in /var/www/frontend
+- name: List files in /var/www/frontend
   ansible.builtin.command:
     cmd: ls -la /var/www/frontend
   register: frontend_dir_contents
