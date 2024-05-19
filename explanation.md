@@ -1,49 +1,53 @@
-# Explanation of Docker Compose Setup
+# Explanation of Playbook Execution
 
-## Objective 1: Choice of Base Image
+## Order of Execution
+1. **Environment Setup**:
+   - **Objective**: Provision the Vagrant virtual machine with Ubuntu server.
+   - **Steps**:
+     - Run the following command to start provisioning the virtual machine:
+       ```bash
+       vagrant up
+       ```
+     - Vagrant will automatically download the Ubuntu server image if it's not already available locally and create a new virtual machine instance.
 
-For each service in the Docker Compose file, I chose base images that are lightweight and well-suited for the specific requirements of the service. For example:
-- Backend: I used the image `ondiekifrank/backend:1.01` which is optimized for running Node.js applications.
-- Frontend: I used the image `ondiekifrank/clientapp:1.0` which is optimized for serving React applications.
-- MongoDB: I used the official MongoDB image `ondiekifrank/mongodb:1.0`.
+2. **Cloning Code**:
+   - **Objective**: Clone the code from GitHub repository.
+   - **Steps**:
+     - Use the `git clone` command to clone the repository into your local machine:
+       ```bash
+       git clone <repository_url>
+       ```
+     - Navigate to the project directory:
+       ```bash
+       cd automated-ecommerce-deployment
+       ```
 
-## Objective 2: Dockerfile Directives
+3. **Container Configuration**:
+   - **Objective**: Set up Docker containers for the application components.
+   - **Steps**:
+     - Ansible playbook (`playbook.yml`) contains tasks to configure Docker containers. Ensure that Docker is installed on the provisioned virtual machine.
+     - Run the Ansible playbook to execute the tasks:
+       ```bash
+       ansible-playbook playbook.yml
+       ```
 
-I utilized the Dockerfile directives to set up each container appropriately. For example:
-- Backend: The Dockerfile for the backend service installs Node.js dependencies and sets up the necessary environment for running the Node.js server.
-- Frontend: The Dockerfile for the frontend service installs dependencies and builds the React application.
-- MongoDB: The official MongoDB image handles all necessary configurations internally.
+4. **Application Deployment**:
+   - **Objective**: Deploy the application on the virtual machine.
+   - **Steps**:
+     - After running the playbook, Ansible will configure the server and deploy the application automatically.
+     - Once the playbook execution is complete, access the deployed application using a web browser.
 
-## Objective 3: Docker Compose Networking
+## Role Functions
+- **Environment Setup**: Ensures the server is provisioned correctly for the application deployment. It includes tasks like installing required packages and setting up dependencies.
+- **Cloning Code**: Retrieves the latest version of the application code from the GitHub repository using the `git` module.
+- **Container Configuration**: Defines tasks to set up Docker containers for each component of the application. It utilizes the `docker_container` module to manage Docker containers.
+- **Application Deployment**: Executes tasks to deploy and configure the application on the server. This may involve running setup scripts, configuring environment variables, and starting services.
 
-I allocated application ports in the Docker Compose file to ensure that each service is accessible from outside the Docker network. For example:
-- Backend: Port 3001 on the host is mapped to port 3000 on the backend container.
-- Frontend: Port 3000 on the host is mapped to port 3000 on the frontend container.
-- MongoDB: Port 27017 on the host is mapped to port 27017 on the MongoDB container.
+## Ansible Modules
+- **git**: Used for cloning the code repository.
+- **docker_container**: Configures Docker containers for the application components.
+- **apt**: Manages packages on the Ubuntu server.
+- **shell**: Executes shell commands for additional configurations.
 
-## Objective 4: Docker Compose Volume Definition and Usage
-
-I defined a named volume `mongo-data` and mounted it to the `/data/db` directory within the MongoDB container. This ensures that MongoDB data is persisted even if the container is stopped or removed.
-
-## Objective 5: Git Workflow
-
-I followed a structured Git workflow with descriptive commits, proper branching, and a clear commit history. Each commit represents a logical unit of change, and commit messages provide insight into the purpose of each change.
-
-## Objective 6: Successful Running of Applications
-
-I thoroughly tested the Docker Compose setup to ensure that all components of the e-commerce platform function as expected. This includes verifying product addition functionality, and proper communication between services.
-
-## Objective 7: Docker Image Tag Naming Standards
-
-I followed semantic versioning conventions for tagging Docker images. Each image is tagged with a version number (`1.0`, `1.01`, etc.) to indicate its release version.
-
-## Objective 8: Image Deployment
-
-All Docker images built for the project were pushed to DockerHub. This allows anyone to pull and use the images directly from DockerHub.
-
-## Screenshot of Deployed Image on DockerHub
-
-
-![Backend](Backend.png)
-![Clientapp](Clientapp.png)
-![MongoDB](MongoDB.png)
+## Terraform Integration (Stage 2)
+In Stage 2, Terraform is used alongside Ansible for resource provisioning. However, as Stage 2 was optional and not implemented in this project, Terraform integration is excluded from the playbook execution explanation.
