@@ -5,6 +5,13 @@
   tags: nodejs
   become: yes
 
+- name: Install npm
+  ansible.builtin.apt:
+    name: npm
+    state: present
+  tags: npm
+  become: yes
+
 - name: Clone frontend repository (shallow clone)
   ansible.builtin.git:
     repo: 'https://github.com/OndiekiFrank/yolo.git'
