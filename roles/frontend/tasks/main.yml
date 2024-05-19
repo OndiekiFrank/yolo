@@ -8,7 +8,7 @@
 
 - name: Clone frontend repository (shallow clone)
   ansible.builtin.git:
-    repo: 'https://github.com/OndiekiFrank/frontend.git'
+    repo: 'https://github.com/OndiekiFrank/yolo.git'
     dest: /var/www/frontend
     depth: 1
   tags: frontend

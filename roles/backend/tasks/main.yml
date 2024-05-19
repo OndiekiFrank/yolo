@@ -15,7 +15,7 @@
 
 - name: Clone backend repository (shallow clone)
   ansible.builtin.git:
-    repo: 'https://github.com/OndiekiFrank/backend.git'
+    repo: 'https://github.com/OndiekiFrank/yolo.git'
     dest: /var/www/backend
     depth: 1
   tags: backend
