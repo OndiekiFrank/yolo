@@ -1,18 +1,20 @@
+---
 - name: Deploy e-commerce application
   hosts: all
   become: yes
   vars_files:
     - vars/main.yml
+
   tasks:
     - name: Gathering Facts
-      gather_facts: yes
+      ansible.builtin.setup:
 
     - name: Update apt package lists
-      apt:
+      ansible.builtin.apt:
         update_cache: yes
 
     - name: Install prerequisites
-      apt:
+      ansible.builtin.apt:
         name: "{{ item }}"
         state: present
       loop:
@@ -20,32 +22,20 @@
         - gnupg
 
     - name: Download NodeSource setup script
-      get_url:
+      ansible.builtin.get_url:
         url: https://deb.nodesource.com/setup_14.x
         dest: /tmp/setup_14.x
         mode: '0755'
 
     - name: Run NodeSource setup script
-      command: bash /tmp/setup_14.x
+      ansible.builtin.command:
+        cmd: bash /tmp/setup_14.x
 
     - name: Install Node.js
-      apt:
+      ansible.builtin.apt:
         name: nodejs
         state: present
       tags: nodejs
-
-    - name: Clone frontend repository (shallow clone)
-      git:
-        repo: 'https://github.com/OndiekiFrank/frontend.git'
-        dest: /var/www/frontend
-        depth: 1  # Perform a shallow clone
-      tags: frontend
-
-    - name: Build frontend
-      command: npm run build
-      args:
-        chdir: /var/www/frontend
-      tags: frontend
 
   roles:
     - frontend

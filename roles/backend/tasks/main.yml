@@ -1,39 +1,38 @@
+---
 - name: Install Node.js
-  become: yes
-  apt:
+  ansible.builtin.apt:
     name: nodejs
     state: present
-  tags: 
-    - nodejs
+  tags: nodejs
+  become: yes
 
 - name: Install npm
-  become: yes
-  apt:
+  ansible.builtin.apt:
     name: npm
     state: present
-  tags: 
-    - npm
-
-- name: Clone backend repository
+  tags: npm
   become: yes
-  git:
+
+- name: Clone backend repository (shallow clone)
+  ansible.builtin.git:
     repo: 'https://github.com/OndiekiFrank/backend.git'
     dest: /var/www/backend
-  tags: 
-    - backend
+    depth: 1
+  tags: backend
+  become: yes
 
 - name: Install backend dependencies
+  ansible.builtin.command:
+    cmd: npm install
+    args:
+      chdir: /var/www/backend
+  tags: backend
   become: yes
-  npm:
-    path: /var/www/backend
-    state: present
-  tags: 
-    - backend
 
 - name: Start backend service
+  ansible.builtin.command:
+    cmd: npm start
+    args:
+      chdir: /var/www/backend
+  tags: backend
   become: yes
-  shell: npm start
-  args:
-    chdir: /var/www/backend
-  tags: 
-    - backend
