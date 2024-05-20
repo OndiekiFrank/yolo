@@ -67,21 +67,17 @@
         state: started
       tags: database
 
+    - name: Remove existing frontend directory
+      file:
+        path: /var/www/frontend/client
+        state: absent
+      tags: frontend
+
     - name: Clone frontend repository
       git:
         repo: 'https://github.com/OndiekiFrank/yolo.git'
-        dest: /var/www/frontend
+        dest: /var/www/frontend/client
         version: HEAD
-      tags: frontend
-
-    - name: List files in /var/www/frontend
-      command: ls -la /var/www/frontend
-      register: frontend_dir_contents
-      tags: frontend
-
-    - name: Print frontend directory contents
-      debug:
-        var: frontend_dir_contents.stdout_lines
       tags: frontend
 
     - name: List files in /var/www/frontend/client
@@ -94,15 +90,21 @@
         var: client_dir_contents.stdout_lines
       tags: frontend
 
+    - name: Remove existing backend directory
+      file:
+        path: /var/www/backend/backend
+        state: absent
+      tags: backend
+
     - name: Clone backend repository
       git:
         repo: 'https://github.com/OndiekiFrank/yolo.git'
-        dest: /var/www/backend
+        dest: /var/www/backend/backend
         version: HEAD
       tags: backend
 
-    - name: List files in /var/www/backend
-      command: ls -la /var/www/backend
+    - name: List files in /var/www/backend/backend
+      command: ls -la /var/www/backend/backend
       register: backend_dir_contents
       tags: backend
 
