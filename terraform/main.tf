@@ -1,5 +1,7 @@
 # Define the Docker provider
-provider "docker" {}
+provider "docker" {
+  source = "kreuzwerker/docker"
+}
 
 # Define Docker container resource
 resource "docker_container" "web" {
