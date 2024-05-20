@@ -1,3 +1,8 @@
+# Specify the Docker provider source
+provider "docker" {
+  source = "kreuzwerker/docker"
+}
+
 # Define Docker container resource
 resource "docker_container" "web" {
   image = "nginx:latest"
