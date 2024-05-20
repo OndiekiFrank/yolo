@@ -1,19 +1,10 @@
-# Specify Docker provider
-terraform {
-  required_providers {
-    docker = {
-      source = "kreuzwerker/docker"
-    }
-  }
-}
-
 # Define Docker container resource
 resource "docker_container" "web" {
   image = "nginx:latest"
   name  = "nginx_container"
   ports {
     internal = 80
-    external = 8080
+    external = 8081  # Specify a different external port
   }
 }
 
