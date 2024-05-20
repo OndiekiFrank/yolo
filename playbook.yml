@@ -4,7 +4,8 @@
   become: yes
   vars:
     docker_compose_version: "1.29.2"
-  
+    git_clone_retries: 5
+    git_clone_delay: 30
   tasks:
     - name: Update apt cache
       apt:
@@ -77,6 +78,14 @@
       shell: git config --global http.postBuffer 524288000
       tags: frontend
 
+    - name: Increase Git clone timeout
+      shell: git config --global http.lowSpeedLimit 0
+      tags: frontend
+
+    - name: Increase Git clone timeout
+      shell: git config --global http.lowSpeedTime 999
+      tags: frontend
+
     - name: Clone frontend repository with retries
       block:
         - name: Clone frontend repository
@@ -84,17 +93,10 @@
             repo: 'https://github.com/OndiekiFrank/yolo.git'
             dest: /var/www/frontend/client
             version: HEAD
-          tags: frontend
-      rescue:
-        - name: Wait before retrying clone
-          pause:
-            seconds: 10
-          tags: frontend
-        - name: Retry clone frontend repository
-          git:
-            repo: 'https://github.com/OndiekiFrank/yolo.git'
-            dest: /var/www/frontend/client
-            version: HEAD
+          register: git_result
+          until: git_result is succeeded
+          retries: "{{ git_clone_retries }}"
+          delay: "{{ git_clone_delay }}"
           tags: frontend
 
     - name: List files in /var/www/frontend/client
@@ -120,17 +122,10 @@
             repo: 'https://github.com/OndiekiFrank/yolo.git'
             dest: /var/www/backend/backend
             version: HEAD
-          tags: backend
-      rescue:
-        - name: Wait before retrying clone
-          pause:
-            seconds: 10
-          tags: backend
-        - name: Retry clone backend repository
-          git:
-            repo: 'https://github.com/OndiekiFrank/yolo.git'
-            dest: /var/www/backend/backend
-            version: HEAD
+          register: git_result
+          until: git_result is succeeded
+          retries: "{{ git_clone_retries }}"
+          delay: "{{ git_clone_delay }}"
           tags: backend
 
     - name: List files in /var/www/backend/backend
