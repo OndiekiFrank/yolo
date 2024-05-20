@@ -4,7 +4,7 @@
   become: yes
   vars:
     docker_compose_version: "1.29.2"
-
+  
   tasks:
     - name: Update apt cache
       apt:
@@ -44,9 +44,14 @@
         name: docker
         executable: pip3
 
+    - name: Gather system architecture
+      set_fact:
+        compose_arch: "{{ ansible_architecture | lower }}"
+        compose_os: "{{ ansible_system | lower }}"
+
     - name: Install Docker Compose
       get_url:
-        url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-$(uname -s)-$(uname -m)"
+        url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-{{ compose_os }}-{{ compose_arch }}"
         dest: /usr/local/bin/docker-compose
         mode: '0755'
 
