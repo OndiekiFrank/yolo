@@ -9,6 +9,8 @@ services:
       - mongodb
     environment:
       MONGODB_URI: mongodb://mongodb:27017/yolomy
+    networks:
+      - app-network
 
   frontend:
     image: ondiekifrank/clientapp:1.0
@@ -16,6 +18,8 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    networks:
+      - app-network
 
   mongodb:
     image: ondiekifrank/mongodb:1.0
@@ -23,6 +27,12 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    networks:
+      - app-network
 
 volumes:
   mongo-data:
+
+networks:
+  app-network:
+    driver: bridge

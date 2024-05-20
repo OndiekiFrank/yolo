@@ -2,7 +2,54 @@
 - name: Deploy e-commerce application
   hosts: all
   become: yes
+  vars:
+    docker_compose_version: "1.29.2"
+
   tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install required packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Install pip3
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install Docker module for Python
+      pip:
+        name: docker
+        executable: pip3
+
+    - name: Install Docker Compose
+      get_url:
+        url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-$(uname -s)-$(uname -m)"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
     - name: Install MongoDB
       apt:
         name: mongodb
@@ -15,25 +62,7 @@
         state: started
       tags: database
 
-    - name: Install Node.js (frontend)
-      apt:
-        name: nodejs
-        state: present
-      tags: frontend
-
-    - name: Install npm (frontend)
-      apt:
-        name: npm
-        state: present
-      tags: frontend
-
-    - name: Remove existing frontend directory
-      file:
-        path: /var/www/frontend
-        state: absent
-      tags: frontend
-
-    - name: Clone frontend repository (full clone)
+    - name: Clone frontend repository
       git:
         repo: 'https://github.com/OndiekiFrank/yolo.git'
         dest: /var/www/frontend
@@ -60,37 +89,7 @@
         var: client_dir_contents.stdout_lines
       tags: frontend
 
-    - name: Install npm dependencies (frontend)
-      command: npm install
-      args:
-        chdir: /var/www/frontend/client
-      tags: frontend
-
-    - name: Build frontend
-      command: npm run build
-      args:
-        chdir: /var/www/frontend/client
-      tags: frontend
-
-    - name: Install Node.js (backend)
-      apt:
-        name: nodejs
-        state: present
-      tags: backend
-
-    - name: Install npm (backend)
-      apt:
-        name: npm
-        state: present
-      tags: backend
-
-    - name: Remove existing backend directory
-      file:
-        path: /var/www/backend
-        state: absent
-      tags: backend
-
-    - name: Clone backend repository (full clone)
+    - name: Clone backend repository
       git:
         repo: 'https://github.com/OndiekiFrank/yolo.git'
         dest: /var/www/backend
@@ -107,14 +106,18 @@
         var: backend_dir_contents.stdout_lines
       tags: backend
 
-    - name: Install npm dependencies (backend)
-      command: npm install
-      args:
-        chdir: /var/www/backend/backend
-      tags: backend
+    - name: Copy docker-compose.yml to VM
+      copy:
+        src: ./docker-compose.yml
+        dest: /var/www/docker-compose.yml
 
-    - name: Start backend server
-      command: npm start
+    - name: Ensure Docker service is started
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Bring up Docker containers
+      command: docker-compose up -d
       args:
-        chdir: /var/www/backend/backend
-      tags: backend
+        chdir: /var/www
