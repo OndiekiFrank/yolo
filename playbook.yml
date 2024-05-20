@@ -62,11 +62,19 @@
         state: present
       tags: database
 
-    - name: Start MongoDB service
+    - name: Stop MongoDB service if running
       service:
         name: mongodb
-        state: started
+        state: stopped
+      ignore_errors: yes
       tags: database
+
+    - name: Stop and remove existing Docker containers
+      shell: |
+        docker stop $(docker ps -a -q) || true
+        docker rm $(docker ps -a -q) || true
+      ignore_errors: yes
+      tags: docker
 
     - name: Remove existing frontend directory
       file:
