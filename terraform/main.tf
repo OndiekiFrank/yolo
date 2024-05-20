@@ -1,6 +1,6 @@
 # Define the Docker provider
 provider "docker" {
-  source = "kreuzwerker/docker"
+  version = "3.0.2"  # Specify the version directly
 }
 
 # Define Docker container resource
