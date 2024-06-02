@@ -1,5 +1,5 @@
 markdown
-# Week 5 Kubernetes Project
+Kubernetes Project
 
 In this project, we will deploy a Kubernetes application using Amazon Elastic Kubernetes Service (EKS). The project involves setting up a Kubernetes cluster, deploying necessary resources, and ensuring the application runs smoothly on the cluster. Below are the instructions to set up and run the project.
 
