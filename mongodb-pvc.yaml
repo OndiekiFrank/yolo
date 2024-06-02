@@ -5,6 +5,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  volumeName: vol-0d0dc771bd95f32b0
   resources:
     requests:
       storage: 1Gi
