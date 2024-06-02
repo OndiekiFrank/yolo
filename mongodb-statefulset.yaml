@@ -28,7 +28,7 @@ spec:
         name: mongodb-persistent-storage
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: standard
+        storageClassName: manual
         resources:
           requests:
             storage: 1Gi
