@@ -1,156 +1,51 @@
-# Explanation.md
 
-## Project Overview
 
-This project involves deploying an e-commerce web application using Ansible for configuration management on a Vagrant-provisioned server. The application is containerized using Docker, and the setup includes automated provisioning of the environment, cloning the application code from GitHub, and running the necessary setups to successfully deploy the application.
+# Project Overview and Explanation
 
-## Objectives
+## Overview
 
-### Stage 1: Ansible Instrumentation
+This project aims to deploy an e-commerce platform on a Kubernetes cluster using Amazon Elastic Kubernetes Service (EKS). The e-commerce platform consists of various components, including a frontend, backend API, and database. We will utilize Kubernetes objects such as Deployments, Services, and Persistent Volumes to ensure scalability, high availability, and data persistence.
 
-The main objectives of this project are:
+## Architecture
 
-1. **Provision Vagrant VM**: Set up the environment by provisioning a Vagrant virtual machine with Ubuntu 20.04.
-2. **Ansible Playbook**: Create an Ansible playbook to automate the deployment process, utilizing variables, roles, blocks, and tags.
-3. **Docker Containerization**: Clone the e-commerce application code from GitHub and configure Docker containers to run the application.
+The e-commerce platform architecture is designed to handle user interactions, manage product listings, process orders, and maintain customer data securely. Here's an overview of the key components:
 
-### Stage 2: Optional Terraform Integration
+1. **Frontend**: The frontend component serves as the user interface for the e-commerce platform. It allows users to browse products, view product details, add items to cart, and proceed to checkout.
 
-Use Terraform for resource provisioning alongside Ansible for server configuration and application deployment.
+2. **Backend API**: The backend API component acts as the middleware between the frontend and the database. It handles user authentication, product management, order processing, and other business logic.
 
-## Prerequisites
+3. **Database**: The database component stores persistent data related to users, products, orders, and transactions. It provides a reliable and scalable storage solution for the e-commerce platform.
 
-- Vagrant
-- VirtualBox
-- Ansible
-- Docker and Docker Compose
+4. **Elastic Block Store (EBS) CSI Driver**: The EBS CSI driver facilitates communication between Kubernetes and Amazon EBS volumes. It allows Kubernetes pods to dynamically provision and attach EBS volumes as persistent storage.
 
-## Project Structure
+## Kubernetes Objects
 
-```plaintext
-.
-├── Vagrantfile
-├── playbook.yml
-├── docker-compose.yml
-├── roles
-│   ├── frontend
-│   │   ├── tasks
-│   │   └── ...
-│   ├── backend
-│   │   ├── tasks
-│   │   └── ...
-│   └── ...
-├── vars
-├── README.md
-└── explanation.md
-```
+We leverage various Kubernetes objects to deploy and manage the e-commerce platform:
 
-## Step-by-Step Instructions
+1. **Deployments**: Deployments are used to manage the lifecycle of application pods. We define Deployments for the frontend, backend API, and database components to ensure fault tolerance and scalability.
 
-### Step 1: Provision the Vagrant Virtual Machine
+2. **Services**: Services provide network connectivity to pods within the Kubernetes cluster. We expose the frontend and backend API Deployments as Services to enable communication between components and external access from users.
 
-1. **Install Vagrant and VirtualBox**:
-   - [Vagrant Installation Guide](https://www.vagrantup.com/docs/installation)
-   - [VirtualBox Installation Guide](https://www.virtualbox.org/manual/ch02.html)
+3. **Persistent Volumes (PVs) and Persistent Volume Claims (PVCs)**: PVs and PVCs are used to provide persistent storage for the database component. We define PersistentVolumes to represent EBS volumes and PersistentVolumeClaims to request storage from these volumes.
 
-2. **Clone the Project Repository**:
-   ```bash
-   git clone https://github.com/OndiekiFrank/yolo.git
-   cd yolo
-   ```
+4. **Secrets**: Secrets are used to securely store sensitive information such as database credentials, API keys, and TLS certificates. We create Secrets to ensure the confidentiality and integrity of data transmitted within the e-commerce platform.
 
-3. **Run the Vagrant Command to Set Up the VM**:
-   ```bash
-   vagrant up --provision
-   ```
+## Deployment Process
 
-### Step 2: Ansible Playbook Execution
+The deployment process involves several steps to set up and configure the e-commerce platform on the Kubernetes cluster:
 
-The Ansible playbook `playbook.yml` performs the following tasks:
+1. **Cluster Setup**: Provision an Amazon EKS cluster in the desired region (e.g., us-west-2) using the AWS Management Console or AWS CLI.
 
-1. **Environment Setup**:
-   - Update the apt cache and install required packages.
-   - Install Docker and Docker Compose.
-   - Install MongoDB and stop its service to avoid port conflicts.
+2. **Authentication**: Authenticate with the EKS cluster using the `aws eks update-kubeconfig` command to configure `kubectl` to communicate with the cluster.
 
-2. **Clone Application Code**:
-   - Clone the frontend and backend code from the GitHub repository.
-   - Increase Git buffer size and timeout settings to handle large repositories.
+3. **Resource Deployment**: Apply Kubernetes manifest files (`deployment.yaml`, `service.yaml`, etc.) to deploy the frontend, backend API, database, and other components to the cluster.
 
-3. **Docker Container Setup**:
-   - Copy the `docker-compose.yml` file to the VM.
-   - Use Docker Compose to bring up the containers.
+4. **Configuration**: Configure environment variables, secrets, and other settings required for the proper functioning of the e-commerce platform.
 
-**Manual Execution**:
-```bash
-ansible-playbook playbook.yml
-```
+5. **Verification**: Verify the deployment status by checking the pods, services, and persistent volume claims using `kubectl`.
 
-### Application Access
-
-Once the setup is complete, access the application via a web browser:
-- Frontend: `http://localhost:3000`
-- Backend: `http://localhost:5000`
-
-### Verifying the Setup
-
-To verify that the containers are running without any port conflicts, execute:
-```bash
-docker ps
-```
-This command should display the running Docker containers for MongoDB, the backend, and the frontend.
-
-## Optional Stage: Terraform and Ansible Integration
-
-If you choose to proceed with the optional stage, follow these steps:
-
-1. **Create a New Branch**:
-   ```bash
-   git checkout -b stage_two
-   mkdir stage_two
-   cd stage_two
-   ```
-
-2. **Terraform Scripts**:
-   - Write Terraform scripts to provision the necessary infrastructure.
-   - Integrate Ansible with Terraform using the `remote-exec` and `local-exec` provisioners.
-
-3. **Running Terraform**:
-   ```bash
-   terraform init
-   terraform apply
-   ```
-
-## Explanation of Playbook
-
-The playbook and roles are structured to ensure modularity and clarity. Each role is responsible for a specific part of the deployment process:
-
-1. **Frontend Role**: 
-   - Tasks include installing dependencies, setting up the environment, and deploying the frontend application.
-   
-2. **Backend Role**:
-   - Tasks include setting up the backend environment, installing dependencies, and deploying the backend application.
-
-### Key Ansible Modules Used
-
-- **apt**: For installing packages.
-- **git**: For cloning repositories.
-- **docker_container**: For managing Docker containers.
-- **service**: For managing services (e.g., MongoDB).
-
-### Order of Execution
-
-1. **Environment Setup**: Prepares the system with necessary packages and configurations.
-2. **Code Cloning**: Retrieves the latest application code from the repository.
-3. **Docker Setup**: Deploys the application in Docker containers using Docker Compose.
-
-## Deliverables
-
-1. **GitHub Repository**: Ensure all work is pushed to [GitHub](https://github.com/OndiekiFrank/yolo).
-2. **Documentation**: Include `README.md` and `explanation.md` files for detailed instructions and explanations.
+6. **Testing**: Test the e-commerce platform by accessing the frontend URL, browsing products, adding items to cart, and completing checkout.
 
 ## Conclusion
 
-This project demonstrates the automation of deploying a containerized e-commerce application using Ansible and Docker. By following the steps outlined, anyone should be able to clone the repository, provision the VM, and run the application seamlessly.
-
-For further details, refer to the [README.md](https://github.com/OndiekiFrank/yolo/master/README.md) file and the well-documented commits in the GitHub repository.
+Deploying the e-commerce platform on Amazon EKS provides a scalable, reliable, and cost-effective solution for hosting a modern web application. By leveraging Kubernetes objects and AWS services, we can ensure high availability, fault tolerance, and data integrity for the e-commerce platform.
