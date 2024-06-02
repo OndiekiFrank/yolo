@@ -1,137 +1,91 @@
+markdown
+# Week 5 Kubernetes Project
 
+In this project, we will deploy a Kubernetes application using Amazon Elastic Kubernetes Service (EKS). The project involves setting up a Kubernetes cluster, deploying necessary resources, and ensuring the application runs smoothly on the cluster. Below are the instructions to set up and run the project.
 
-```markdown
-# E-commerce Platform Deployment with Ansible
+## Project Overview
 
-## Overview
-
-This project involves deploying an e-commerce web application using Ansible for configuration management on a Vagrant provisioned server. The application is containerized using Docker, and the setup includes automated provisioning of the environment, cloning the application code from GitHub, and running the necessary setups to successfully deploy the application.
-
-## Objectives
-
-The main objectives of this project are:
-
-1. **Ansible Instrumentation**:
-    - Set up the environment by provisioning a Vagrant virtual machine with Ubuntu 20.04.
-    - Create an Ansible playbook to automate the deployment process.
-    - Use variables, roles, blocks, and tags for effective task management.
-    - Clone the e-commerce application code from GitHub and configure Docker containers to run the application.
-  
-2. **Optional Stage**: Use Terraform for resource provisioning along with Ansible for configuration management.
-
-## Prerequisites
-
-- Vagrant
-- VirtualBox
-- Ansible
-- Docker and Docker Compose
+The project involves deploying a Kubernetes application that utilizes Amazon Elastic Block Store (EBS) as the storage solution. We will deploy the necessary components using Kubernetes YAML manifests and ensure the application works as expected.
 
 ## Project Structure
 
-```
-.
-├── Vagrantfile
-├── playbook.yml
-├── docker-compose.yml
-├── roles
-│   ├── frontend
-│   │   ├── tasks
-│   │   └── ...
-│   ├── backend
-│   │   ├── tasks
-│   │   └── ...
-│   └── ...
-└── README.md
-```
+The project repository is organized as follows:
 
-## Setup Instructions
+- `README.md`: Instructions on how to set up and run the project.
+- `explanation.md`: Explanation of the Kubernetes objects used, method of exposing pods to internet traffic, use of persistent storage, and Git workflow.
+- `ebs-csi-controller.yaml`: Kubernetes manifest for deploying the EBS CSI controller.
+- `ebs-csi-node.yaml`: Kubernetes manifest for deploying the EBS CSI node.
+- `csi-driver.yaml`: Kubernetes manifest for configuring the CSI driver.
+- `deployment.yaml`: Kubernetes manifest for deploying the application.
+- `service.yaml`: Kubernetes manifest for exposing the application as a service.
 
-### Step 1: Provision the Vagrant Virtual Machine
+## Instructions
 
-1. Install Vagrant and VirtualBox if they are not already installed.
-2. Clone the project repository:
+1. **Set up Amazon EKS Cluster**: Follow the AWS documentation to set up an Amazon EKS cluster in the desired region (us-west-2).
+
+2. **Authenticate with the Cluster**: Use the AWS CLI to authenticate with the EKS cluster:
    ```bash
-   git clone <repository_url>
-   cd <repository_directory>
-   ```
-3. Run the Vagrant command to set up the VM:
-   ```bash
-   vagrant up --provision
+   aws eks --region us-west-2 update-kubeconfig --name <cluster-name>
    ```
 
-### Step 2: Ansible Playbook
+3. **Deploy EBS CSI Controller**: Apply the `ebs-csi-controller.yaml` manifest to deploy the EBS CSI controller:
+   ```bash
+   kubectl apply -f ebs-csi-controller.yaml
+   ```
 
-The Ansible playbook `playbook.yml` performs the following tasks:
+4. **Deploy EBS CSI Node**: Apply the `ebs-csi-node.yaml` manifest to deploy the EBS CSI node:
+   ```bash
+   kubectl apply -f ebs-csi-node.yaml
+   ```
 
-1. **Environment Setup**:
-    - Update the apt cache and install required packages.
-    - Install Docker and Docker Compose.
-    - Install MongoDB and stop its service to avoid port conflicts.
-  
-2. **Clone Application Code**:
-    - Clone the frontend and backend code from the GitHub repository.
-    - Increase Git buffer size and timeout settings to handle large repositories.
+5. **Configure CSI Driver**: Apply the `csi-driver.yaml` manifest to configure the CSI driver:
+   ```bash
+   kubectl apply -f csi-driver.yaml
+   ```
 
-3. **Docker Container Setup**:
-    - Copy the `docker-compose.yml` file to the VM.
-    - Use Docker Compose to bring up the containers.
+6. **Deploy Application**: Apply the `deployment.yaml` manifest to deploy the application:
+   ```bash
+   kubectl apply -f deployment.yaml
+   ```
 
-### Ansible Playbook Execution
+7. **Expose Application**: Apply the `service.yaml` manifest to expose the application as a service:
+   ```bash
+   kubectl apply -f service.yaml
+   ```
 
-The playbook is designed to run automatically during the Vagrant provisioning step. However, it can also be executed manually with the following command:
+8. **Verify Deployment**: Check the status of the pods to ensure they are running:
+   ```bash
+   kubectl get pods
+   ```
 
-```bash
-ansible-playbook playbook.yml
-```
+9. **Access Application**: Once the pods are running, access the application using the service IP address or DNS name provided by the service manifest.
 
-### Application Access
+##  Objectives
 
-Once the setup is complete, the application should be accessible via a web browser. By default, the frontend should be accessible at `http://localhost:3000` and the backend at `http://localhost:5000` on your local machine.
+1. **Git Workflow**:
+   - Commits: Ensure each step of the project development is captured with descriptive commits.
+   - README: Provide a well-documented README and explanation.md files.
+   - Folder Structure: Maintain a proper folder structure with a minimum of 10 commits.
 
-### Verifying the Setup
+2. **Kubernetes Objects Implementation**:
+   - Use of StatefulSets for database solution.
+   - Use of services to expose pods.
+   - Use of Kubernetes controllers to maintain service availability.
+   - Application functionality: Ensure the application works as expected.
 
-To verify that the containers are running without any port conflicts, execute:
+3. **Use of Persistent Volumes**:
+   - Use persistent volumes to prevent data loss upon deletion of the database pod.
 
-```bash
-docker ps
-```
+## License
 
-This command should display the running Docker containers for MongoDB, the backend, and the frontend.
+This project is licensed under the terms of the MIT license. See the [LICENSE](LICENSE) file for details.
 
-## Optional Stage: Terraform and Ansible Integration
+## Contributors
 
-If you choose to proceed with the optional stage, you will use Terraform for resource provisioning. The integration involves:
+- [Frankline Ondieki](https://github.com/OndiekiFrank) - DevOps Engineer
+  - Email: ondiekifrank021@gmail.com
 
-1. **Creating a New Branch**:
-    ```bash
-    git checkout -b stage_two
-    mkdir stage_two
-    cd stage_two
-    ```
+---
 
-2. **Terraform Scripts**:
-    - Write Terraform scripts to provision the necessary infrastructure.
-    - Integrate Ansible with Terraform using the `remote-exec` and `local-exec` provisioners.
-
-3. **Running Terraform**:
-    ```bash
-    terraform init
-    terraform apply
-    ```
-
-## Explanation of Playbook
-
-An explanation of the playbook and roles used is provided in the `explanation.md` file. This includes a detailed breakdown of each task, the purpose of roles, and the sequence of execution.
-
-## Deliverables
-
-- Ensure all work is pushed to GitHub.
-- Include the `Vagrantfile`, `playbook.yml`, variable files, and roles in the repository.
-- Detailed documentation with `README.md` and `explanation.md`.
-
-## Conclusion
-
-This project demonstrates the ability to automate the deployment of a containerized e-commerce application using Ansible and Docker. By following the steps outlined, anyone should be able to clone the repository, provision the VM, and run the application seamlessly.
-
-For further details, refer to the [explanation.md](explanation.md) file and the well-documented commits in the GitHub repository.
+By following these instructions, you should be able to successfully set up and run the Kubernetes application on Amazon EKS. If you encounter any issues, refer to the troubleshooting section in the README or reach out for assistance. Happy Kubernetizing!
 ```

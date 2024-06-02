@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ebs-csi-controller
+  namespace: kube-system
+  labels:
+    app: ebs-csi-controller
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ebs-csi-controller
+  template:
+    metadata:
+      labels:
+        app: ebs-csi-controller
+    spec:
+      serviceAccountName: ebs-csi-controller-sa
+      imagePullSecrets:
+      - name: myregistrykey
+      containers:
+      - name: ebs-plugin
+        image: public.ecr.aws/eks/aws-ebs-csi-driver:v1.14.0
+        imagePullPolicy: Always
+        args:
+        - --endpoint=$(CSI_ENDPOINT)
+        - --logtostderr
+        - --v=5
+        env:
+        - name: CSI_ENDPOINT
+          value: unix:///csi/csi.sock
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+      - name: csi-provisioner
+        image: public.ecr.aws/eks/csi-provisioner:v3.0.0
+        imagePullPolicy: IfNotPresent
+        args:
+        - --provisioner=ebs.csi.aws.com
+        - --csi-address=$(ADDRESS)
+        - --v=5
+        env:
+        - name: ADDRESS
+          value: /csi/csi.sock
+        volumeMounts:
+        - mountPath: /csi
+          name: socket-dir
+      volumes:
+      - name: socket-dir
+        emptyDir: {}
